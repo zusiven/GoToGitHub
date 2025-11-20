@@ -1,8 +1,11 @@
 import socket
+import datetime as dt
 import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
 import dns.resolver
 import ssl
+from pathlib import Path
+
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 # 新加坡 DNS 服务器
@@ -108,7 +111,7 @@ def test_ips(ips, domain, port=443, timeout=3):
     reachable_ips.sort(key=lambda x: x[1])
     return [ip for ip, _ in reachable_ips]
 
-def process_domains(domains, max_ips_per_domain=3, output_file="host_cp.txt"):
+def process_domains(domains, max_ips_per_domain=3, output_file="hosts.txt"):
     """处理多个域名"""
     print(f"开始处理 {len(domains)} 个域名...\n")
     
@@ -143,8 +146,9 @@ def process_domains(domains, max_ips_per_domain=3, output_file="host_cp.txt"):
     
     # 写入文件
     write_hosts_file(all_hosts, output_file)
+    write_hosts_file(all_hosts, "hosts.txt")
 
-def write_hosts_file(hosts, output_file="host_cp.txt"):
+def write_hosts_file(hosts, output_file="hosts.txt"):
     """将所有主机写入 hosts 文件，包含 DNS 来源注释"""
     print(f"\n将结果写入 {output_file}...\n")
     
@@ -177,7 +181,7 @@ def write_hosts_file(hosts, output_file="host_cp.txt"):
         print(f"写入文件失败: {e}")
         return False
 
-def load_domains_from_file(filename="domains.txt"):
+def load_domains_from_file(filename):
     """从文件中读取域名列表"""
     try:
         with open(filename, 'r', encoding='utf-8') as f:
@@ -191,15 +195,16 @@ def load_domains_from_file(filename="domains.txt"):
             return domains
     except FileNotFoundError:
         print(f"错误: 找不到文件 {filename}")
-        print("请确保在脚本目录下创建 domains.txt 文件")
+        print(f"请确保在脚本目录下创建 {filename} 文件")
         return []
     except Exception as e:
         print(f"读取文件出错: {e}")
         return []
 
-def main():
+def query_ips():
     # 从 domains.txt 中读取域名
-    domains = load_domains_from_file("domains.txt")
+    conf_path = Path("conf/domains.txt")
+    domains = load_domains_from_file(conf_path)
     
     if not domains:
         print("没有找到需要查询的域名，程序退出")
@@ -207,8 +212,12 @@ def main():
     
     print(f"从 domains.txt 读取到 {len(domains)} 个域名\n")
     
-    process_domains(domains, max_ips_per_domain=3, output_file="host_cp.txt")
+    save_dir = Path("data")
+    save_dir.mkdir(exist_ok=True)
+
+    save_path = save_dir / f"{dt.datetime.now().strftime("%Y_%m_%d")}.txt"
+    process_domains(domains, max_ips_per_domain=3, output_file=save_path)
     print("\n✓ 任务完成！")
 
 if __name__ == "__main__":
-    main()
+    query_ips()
