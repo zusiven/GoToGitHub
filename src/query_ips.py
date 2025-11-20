@@ -159,12 +159,12 @@ def get_host_infos(hosts: list):
     for ip, domain in hosts:
         # sources = ip_to_dns_source.get(ip, {'Unknown'})
         # source_str = ', '.join(sorted(sources))
-        
+
         # 使用制表符和统一格式，确保注释对齐
         # infos.append(f"{ip}\t{domain}\t# DNS from: {source_str}")
         infos.append(f"{ip}\t{domain}")
     
-    infos.append("\n# DNS END")
+    infos.append("\n# hosts END")
     host_infos = "\n".join(infos)
     return host_infos
 
