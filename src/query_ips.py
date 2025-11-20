@@ -217,9 +217,9 @@ def write_hosts_to_readme(host_infos):
         lines.append("```\n")
         lines.append("\n")
 
-        lines.append("如果本地第一个失效，建议注释测试下一个")
+        lines.append("如果本地第一个失效，建议注释测试下一个\n")
         lines.append("\n")
-        lines.append("希望给你带来友好的体验~")
+        lines.append("希望给你带来友好的体验~\n")
         lines.append("\n")
         lines.append("Thanks [GitHub520](https://github.com/521xueweihan/GitHub520) ")
         
