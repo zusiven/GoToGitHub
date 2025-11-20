@@ -157,10 +157,12 @@ def get_host_infos(hosts: list):
     infos.append(f"# Total: {len(hosts)} entries\n")
 
     for ip, domain in hosts:
-        sources = ip_to_dns_source.get(ip, {'Unknown'})
-        source_str = ', '.join(sorted(sources))
+        # sources = ip_to_dns_source.get(ip, {'Unknown'})
+        # source_str = ', '.join(sorted(sources))
+        
         # 使用制表符和统一格式，确保注释对齐
-        infos.append(f"{ip}\t{domain}\t# DNS from: {source_str}")
+        # infos.append(f"{ip}\t{domain}\t# DNS from: {source_str}")
+        infos.append(f"{ip}\t{domain}")
     
     infos.append("\n# DNS END")
     host_infos = "\n".join(infos)
@@ -213,6 +215,8 @@ def write_hosts_to_readme(host_infos):
         lines.append("```txt\n")
         lines.append(host_infos)
         lines.append("```\n")
+        lines.append("\n")
+        lines.append("Thanks [GitHub520](https://github.com/521xueweihan/GitHub520) ")
         
     # 写回文件
     with open("README.md", "w", encoding="utf-8") as f:
