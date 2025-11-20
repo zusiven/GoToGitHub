@@ -144,30 +144,37 @@ def process_domains(domains, max_ips_per_domain=3, output_file="hosts.txt"):
         for ip in top_ips:
             all_hosts.append((ip, domain))
     
+    host_infos = get_host_infos(all_hosts)
     # 写入文件
-    write_hosts_file(all_hosts, output_file)
-    write_hosts_file(all_hosts, "hosts.txt")
+    write_hosts_file(host_infos, output_file)
+    write_hosts_file(host_infos, "hosts.txt")
+    write_hosts_to_readme(host_infos)
 
-def write_hosts_file(hosts, output_file="hosts.txt"):
+def get_host_infos(hosts: list):
+    infos = []
+    infos.append("# GitHub Hosts")
+    infos.append(f"# Generated at {time.strftime('%Y-%m-%d %H:%M:%S')}")
+    infos.append(f"# Total: {len(hosts)} entries\n")
+
+    for ip, domain in hosts:
+        sources = ip_to_dns_source.get(ip, {'Unknown'})
+        source_str = ', '.join(sorted(sources))
+        # 使用制表符和统一格式，确保注释对齐
+        infos.append(f"{ip}\t{domain}\t# DNS from: {source_str}")
+    
+    infos.append("\n# DNS END")
+    host_infos = "\n".join(infos)
+    return host_infos
+
+def write_hosts_file(host_infos, output_file="hosts.txt"):
     """将所有主机写入 hosts 文件，包含 DNS 来源注释"""
     print(f"\n将结果写入 {output_file}...\n")
-    
+
     try:
         with open(output_file, 'w', encoding='utf-8') as f:
-            f.write(f"# GitHub Hosts\n")
-            f.write(f"# Generated at {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
-            f.write(f"# Total: {len(hosts)} entries\n")
-            
-            for ip, domain in hosts:
-                # 获取该 IP 的 DNS 来源
-                sources = ip_to_dns_source.get(ip, {'Unknown'})
-                source_str = ', '.join(sorted(sources))
-                # 使用制表符和统一格式，确保注释对齐
-                f.write(f"{ip}\t{domain}\t# DNS from: {source_str}\n")
+            f.write(host_infos)
 
-            f.write(f"\n\n# DNS END")
-
-        print(f"✓ 成功写入 {len(hosts)} 条记录到 {output_file}")
+        print(f"✓ 成功写入到 {output_file}")
         
         # 显示文件内容
         print(f"\n{output_file} 内容:")
@@ -181,6 +188,35 @@ def write_hosts_file(hosts, output_file="hosts.txt"):
     except Exception as e:
         print(f"写入文件失败: {e}")
         return False
+
+def write_hosts_to_readme(host_infos):
+    with open("README.md", "r", encoding="utf-8") as f:
+        lines = f.readlines()
+
+    # 找到 "#### hosts" 这一行的位置
+    hosts_index = -1
+    for i, line in enumerate(lines):
+        if "#### hosts" in line:
+            hosts_index = i + 2  # 在下两行插入
+            break
+
+    # 如果找到了，插入新内容
+    if hosts_index != -1:
+        # 保留 "#### hosts" 这一行，删除后面的所有内容
+        lines = lines[:hosts_index + 1]
+
+        # 在后面添加新内容
+        if not host_infos.endswith("\n"):
+            host_infos += "\n"
+        
+        lines.append("\n")
+        lines.append("```txt\n")
+        lines.append(host_infos)
+        lines.append("```\n")
+        
+    # 写回文件
+    with open("README.md", "w", encoding="utf-8") as f:
+        f.writelines(lines)
 
 def load_domains_from_file(filename):
     """从文件中读取域名列表"""
