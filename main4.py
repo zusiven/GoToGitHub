@@ -4,6 +4,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import dns.resolver
 import ssl
 
+
 # 新加坡 DNS 服务器
 DNS_SERVERS = {
     # DigitalOcean - Singapore
@@ -158,7 +159,8 @@ def write_hosts_file(hosts, output_file="host_cp.txt"):
                 # 获取该 IP 的 DNS 来源
                 sources = ip_to_dns_source.get(ip, {'Unknown'})
                 source_str = ', '.join(sorted(sources))
-                f.write(f"{ip} {domain}  # DNS from: {source_str}\n")
+                # 使用制表符和统一格式，确保注释对齐
+                f.write(f"{ip}\t{domain}\t# DNS from: {source_str}\n")
         
         print(f"✓ 成功写入 {len(hosts)} 条记录到 {output_file}")
         
@@ -175,43 +177,35 @@ def write_hosts_file(hosts, output_file="host_cp.txt"):
         print(f"写入文件失败: {e}")
         return False
 
+def load_domains_from_file(filename="domains.txt"):
+    """从文件中读取域名列表"""
+    try:
+        with open(filename, 'r', encoding='utf-8') as f:
+            # 读取每一行，去除空白和注释
+            domains = []
+            for line in f:
+                line = line.strip()
+                # 跳过空行和注释行
+                if line and not line.startswith('#'):
+                    domains.append(line)
+            return domains
+    except FileNotFoundError:
+        print(f"错误: 找不到文件 {filename}")
+        print("请确保在脚本目录下创建 domains.txt 文件")
+        return []
+    except Exception as e:
+        print(f"读取文件出错: {e}")
+        return []
+
 def main():
-    domains = [
-        'alive.github.com',
-        'api.github.com',
-        'api.individual.githubcopilot.com',
-        'avatars.githubusercontent.com',
-        'avatars0.githubusercontent.com',
-        'avatars1.githubusercontent.com',
-        'avatars2.githubusercontent.com',
-        'avatars3.githubusercontent.com',
-        'avatars4.githubusercontent.com',
-        'avatars5.githubusercontent.com',
-        'camo.githubusercontent.com',
-        'central.github.com',
-        'cloud.githubusercontent.com',
-        'codeload.github.com',
-        'collector.github.com',
-        'desktop.githubusercontent.com',
-        'favicons.githubusercontent.com',
-        'gist.github.com',
-        'github.blog',
-        'github.com',
-        'github.community',
-        'github.githubassets.com',
-        'github.global.ssl.fastly.net',
-        'github.io',
-        'github.map.fastly.net',
-        'githubstatus.com',
-        'live.github.com',
-        'media.githubusercontent.com',
-        'objects.githubusercontent.com',
-        'raw.githubusercontent.com',
-        'user-images.githubusercontent.com',
-        'vscode.dev',
-        'education.github.com',
-        'private-user-images.githubusercontent.com',
-    ]
+    # 从 domains.txt 中读取域名
+    domains = load_domains_from_file("domains.txt")
+    
+    if not domains:
+        print("没有找到需要查询的域名，程序退出")
+        return
+    
+    print(f"从 domains.txt 读取到 {len(domains)} 个域名\n")
     
     process_domains(domains, max_ips_per_domain=3, output_file="host_cp.txt")
     print("\n✓ 任务完成！")
