@@ -157,7 +157,6 @@ def write_hosts_file(hosts, output_file="hosts.txt"):
             f.write(f"# GitHub Hosts\n")
             f.write(f"# Generated at {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
             f.write(f"# Total: {len(hosts)} entries\n")
-            f.write(f"# DNS Source: Singapore (idcbest.com)\n\n")
             
             for ip, domain in hosts:
                 # 获取该 IP 的 DNS 来源
@@ -165,7 +164,9 @@ def write_hosts_file(hosts, output_file="hosts.txt"):
                 source_str = ', '.join(sorted(sources))
                 # 使用制表符和统一格式，确保注释对齐
                 f.write(f"{ip}\t{domain}\t# DNS from: {source_str}\n")
-        
+
+            f.write(f"\n\n# DNS END")
+
         print(f"✓ 成功写入 {len(hosts)} 条记录到 {output_file}")
         
         # 显示文件内容
