@@ -196,7 +196,7 @@ def write_hosts_to_readme(host_infos):
     # 找到 "#### hosts" 这一行的位置
     hosts_index = -1
     for i, line in enumerate(lines):
-        if "#### hosts" in line:
+        if "## 🚀 更愉快的 clone 🚀" in line:
             hosts_index = i + 2  # 在下两行插入
             break
 
