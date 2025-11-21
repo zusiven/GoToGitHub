@@ -1,5 +1,8 @@
 #!/bin/bash
 
+git config user.name "may"
+git config user.email "fake@windy.com"
+
 export PYTHONPATH=$PWD
 cd $PYTHONPATH
 
@@ -15,4 +18,3 @@ else
   echo "Python 程序执行失败，取消 Git push"
   exit 1
 fi
-
