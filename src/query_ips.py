@@ -10,10 +10,13 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # 新加坡 DNS 服务器
 DNS_SERVERS = {
-    # DigitalOcean - Singapore
     'china01': '210.16.67.138',
     'china02': '223.6.6.48',
-    'janpan01': '89.233.109.82'
+    'janpan01': '89.233.109.82',
+    'singapore01': '121.4.4.41',
+    'singapore02': '20.212.95.229',
+    'korea01': '123.111.21.33',
+    'malaysia': '1.32.63.76'
 }
 
 # 存储 IP 和对应的 DNS 来源（使用 set 防止重复）
@@ -62,7 +65,7 @@ def query_dns_server(dns_server, domain):
         return []
 
 def test_tcp_connection_with_delay(ip, domain, port=443, timeout=3):
-    """真正测试到指定 IP 的 TCP 连通性并测量延迟，包含 SSL 验证"""
+    """测试指定 IP 的 TCP 连通性并测量延迟，包含 SSL 验证"""
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(timeout)
@@ -157,12 +160,12 @@ def get_host_infos(hosts: list):
     infos.append(f"# Total: {len(hosts)} entries\n")
 
     for ip, domain in hosts:
-        # sources = ip_to_dns_source.get(ip, {'Unknown'})
-        # source_str = ', '.join(sorted(sources))
-
         # 使用制表符和统一格式，确保注释对齐
+        # sources = ip_to_dns_source.get(ip, {'Unknown'})
+        # source_str = ', '.join(sorted(sources))        
         # infos.append(f"{ip}\t{domain}\t# DNS from: {source_str}")
-        infos.append(f"{ip}\t{domain}")
+
+        infos.append(f"{ip}\t{domain}") # 👻
     
     infos.append("\n# hosts END")
     host_infos = "\n".join(infos)
@@ -198,7 +201,7 @@ def write_hosts_to_readme(host_infos):
     # 找到 "#### hosts" 这一行的位置
     hosts_index = -1
     for i, line in enumerate(lines):
-        if "## 🚀 更愉快的 clone 🚀" in line:
+        if "### 🚀 更愉快的 clone 🚀" in line:
             hosts_index = i + 2  # 在下两行插入
             break
 
