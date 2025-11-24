@@ -1,10 +1,10 @@
 #!/bin/bash
 
+export PYTHONPATH=$(dirname "$0")
+cd $PYTHONPATH
+
 git config user.name "may"
 git config user.email "fake@windy.com"
-
-export PYTHONPATH=$PWD
-cd $PYTHONPATH
 
 .venv/bin/python src/main.py
 
