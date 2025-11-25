@@ -8,7 +8,7 @@ from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
-# 新加坡 DNS 服务器
+# DNS 服务器
 DNS_SERVERS = {
     'china01': '210.16.67.138',
     'china02': '223.6.6.48',
