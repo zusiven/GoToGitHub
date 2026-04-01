@@ -17,13 +17,13 @@
 
 ```txt
 # GitHub Hosts - Auto Generated
-# Generated at: 2026-04-01 01:01:05
+# Generated at: 2026-04-02 01:01:04
 # Total entries: 3
 # DNS Servers: 10
 
 # github.com
 20.205.243.166	github.com
-140.82.114.4	github.com
+140.82.116.3	github.com
 140.82.116.4	github.com
 
 # Hosts END
