@@ -1,11 +1,11 @@
 # GitHub Hosts - Auto Generated
-# Generated at: 2026-11-13 01:01:10
+# Generated at: 2026-11-14 01:01:04
 # Total entries: 3
 # DNS Servers: 10
 
 # github.com
-20.205.243.166	github.com
-172.182.252.133	github.com
-20.172.24.160	github.com
+57.155.223.240	github.com
+20.6.7.17	github.com
+20.247.166.64	github.com
 
 # Hosts END
